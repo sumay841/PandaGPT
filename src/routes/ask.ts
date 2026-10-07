@@ -1,6 +1,5 @@
 import { Router, type IRouter, type Request, type Response } from "express";
-import { getOpenRouterClient, MODEL, classifyOpenRouterError } from "../lib/openrouter";
-
+import { getOpenAIClient, MODEL, classifyOpenAIError } from "../lib/openrouter";
 const router: IRouter = Router();
 
 interface ChatMessage {
@@ -56,7 +55,7 @@ Class: ${studentClass}
 Subject: ${subject}`;
 
   try {
-    const openai   = getOpenRouterClient();
+    const openai = getOpenAIClient();
     const response = await openai.chat.completions.create({
       model:    MODEL,
       messages: [
@@ -71,8 +70,8 @@ Subject: ${subject}`;
 
     res.json({ answer });
   } catch (err: unknown) {
-    req.log?.error({ err }, "OpenRouter /ask error");
-    const { status, message } = classifyOpenRouterError(err);
+    req.log?.error({ err }, "OpenAI /ask error");
+const { status, message } = classifyOpenAIError(err);
     res.status(status).json({ error: message });
   }
 });
