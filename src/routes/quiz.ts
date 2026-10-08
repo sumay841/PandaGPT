@@ -1,5 +1,5 @@
 import { Router, type IRouter, type Request, type Response } from "express";
-import { getOpenAIClient, MODEL, classifyOpenAIError } from "../lib/OpenAI";
+import { getOpenAIClient, MODEL, classifyOpenAIError } from "../lib/openrouter";
 const router: IRouter = Router();
 
 const DIFF_HINTS: Record<string, string> = {
