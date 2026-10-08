@@ -1,20 +1,25 @@
 import OpenAI from "openai";
 
-export const MODEL = "gpt-5-mini";
+export const MODEL = "openrouter/free";
 
 let _client: OpenAI | null = null;
 
-export function getOpenAIClient(): OpenAI {
+export function getOpenRouterClient(): OpenAI {
   if (!_client) {
     _client = new OpenAI({
-      apiKey: process.env["OPENAI_API_KEY"] ?? "",
+      baseURL: "https://openrouter.ai/api/v1",
+      apiKey: process.env["OPENROUTER_API_KEY"] ?? "",
+      defaultHeaders: {
+        "HTTP-Referer": "https://pandagpt-frontend-bdky.onrender.com",
+        "X-Title": "PandaGPT",
+      },
     });
   }
 
   return _client;
 }
 
-export function classifyOpenAIError(err: unknown): {
+export function classifyOpenRouterError(err: unknown): {
   status: number;
   message: string;
 } {
@@ -25,28 +30,28 @@ export function classifyOpenAIError(err: unknown): {
     if (status === 401) {
       return {
         status: 502,
-        message: "Invalid or missing OpenAI API key.",
+        message: "Invalid or missing OpenRouter API key.",
       };
     }
 
     if (status === 429) {
       return {
         status: 429,
-        message: "OpenAI rate limit reached. Please try again later.",
+        message: "OpenRouter free-model limit reached. Please try again later.",
       };
     }
 
     if (status === 404) {
       return {
         status: 502,
-        message: "The selected OpenAI model is unavailable.",
+        message: "The selected free AI model is unavailable. Please try again later.",
       };
     }
 
     if (status >= 500) {
       return {
         status: 502,
-        message: "OpenAI is temporarily unavailable.",
+        message: "OpenRouter is temporarily unavailable. Please try again later.",
       };
     }
   }
