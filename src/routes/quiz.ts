@@ -1,6 +1,5 @@
 import { Router, type IRouter, type Request, type Response } from "express";
-import { getOpenRouterClient, MODEL, classifyOpenRouterError } from "../lib/openrouter";
-
+import { getOpenAIClient, MODEL, classifyOpenAIError } from "../lib/OpenAI";
 const router: IRouter = Router();
 
 const DIFF_HINTS: Record<string, string> = {
@@ -57,7 +56,7 @@ Example of the exact format required:
 Important: respond with valid JSON only. No markdown, no code fences, no extra text.`;
 
   try {
-    const openai     = getOpenRouterClient();
+    const openai     = getOpenAIClient()
     const completion = await openai.chat.completions.create({
       model:           MODEL,
       messages:        [{ role: "user", content: prompt }],
@@ -98,7 +97,7 @@ Important: respond with valid JSON only. No markdown, no code fences, no extra t
     return res.json({ questions });
   } catch (err: unknown) {
     console.error("Quiz generate error:", err);
-    const { status, message } = classifyOpenRouterError(err);
+    const { status, message } = classifyOpenAIError(err);
     return res.status(status).json({ error: message });
   }
 });
